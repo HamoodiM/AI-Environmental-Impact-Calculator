@@ -1,0 +1,157 @@
+/**
+ * AI Environmental Impact Calculator - Core Calculation Logic
+ * Based on research data and conservative estimates
+ */
+
+// Energy consumption estimates (in kWh per 1M tokens)
+// Based on research: GPT-3 training consumed ~1,287 MWh for ~300B tokens
+// Inference is typically 10-100x more efficient than training
+const ENERGY_PER_TOKEN = {
+  // Conservative estimates based on research
+  gpt3: 0.0000043, // kWh per token (inference)
+  gpt4: 0.0000086, // kWh per token (inference, estimated 2x GPT-3)
+  claude: 0.0000065, // kWh per token (inference, estimated)
+  gemini: 0.0000055, // kWh per token (inference, estimated)
+  default: 0.000006 // kWh per token (average)
+};
+
+// Regional CO2 emission factors (kg CO2 per kWh)
+const CO2_EMISSION_FACTORS = {
+  'global-average': 0.475, // kg CO2/kWh
+  'usa-average': 0.416, // kg CO2/kWh
+  'europe-average': 0.276, // kg CO2/kWh
+  'china-average': 0.581, // kg CO2/kWh
+  'canada-average': 0.130, // kg CO2/kWh
+  'iowa-usa': 0.737, // kg CO2/kWh (high carbon intensity)
+  'quebec-canada': 0.020, // kg CO2/kWh (low carbon intensity)
+  'renewable': 0.050 // kg CO2/kWh (renewable energy)
+};
+
+// Environmental equivalence factors
+const EQUIVALENCE_FACTORS = {
+  // CO2 emissions per activity (kg CO2)
+  carMilePerGallon: 0.411, // kg CO2 per mile (average car, 25 mpg)
+  flightPerMile: 0.255, // kg CO2 per mile (domestic flight)
+  beefBurger: 3.4, // kg CO2 per burger
+  smartphoneCharge: 0.0001, // kg CO2 per charge
+  householdElectricityPerDay: 20.5, // kg CO2 per day (average US household)
+  treeYearAbsorption: 22, // kg CO2 absorbed per tree per year
+  laptopHour: 0.05, // kg CO2 per hour of laptop use
+  lightbulbHour: 0.0004 // kg CO2 per hour (LED bulb)
+};
+
+/**
+ * Calculate environmental impact for given token usage
+ * @param {number} tokens - Number of tokens used
+ * @param {string} model - AI model type
+ * @param {string} region - Geographic region for CO2 calculation
+ * @returns {Object} Environmental impact calculations
+ */
+function calculateEnvironmentalImpact(tokens, model = 'default', region = 'global-average') {
+  // Validate inputs
+  if (!tokens || tokens <= 0) {
+    throw new Error('Token count must be a positive number');
+  }
+
+  // Get energy consumption per token for the model
+  const energyPerToken = ENERGY_PER_TOKEN[model] || ENERGY_PER_TOKEN.default;
+  
+  // Get CO2 emission factor for the region
+  const co2Factor = CO2_EMISSION_FACTORS[region] || CO2_EMISSION_FACTORS['global-average'];
+  
+  // Calculate total energy consumption (kWh)
+  const totalEnergy = tokens * energyPerToken;
+  
+  // Calculate total CO2 emissions (kg)
+  const totalCO2 = totalEnergy * co2Factor;
+  
+  // Calculate environmental equivalences
+  const equivalences = {
+    carMiles: totalCO2 / EQUIVALENCE_FACTORS.carMilePerGallon,
+    flightMiles: totalCO2 / EQUIVALENCE_FACTORS.flightPerMile,
+    beefBurgers: totalCO2 / EQUIVALENCE_FACTORS.beefBurger,
+    smartphoneCharges: totalCO2 / EQUIVALENCE_FACTORS.smartphoneCharge,
+    householdElectricityDays: totalCO2 / EQUIVALENCE_FACTORS.householdElectricityPerDay,
+    treeYears: totalCO2 / EQUIVALENCE_FACTORS.treeYearAbsorption,
+    laptopHours: totalCO2 / EQUIVALENCE_FACTORS.laptopHour,
+    lightbulbHours: totalCO2 / EQUIVALENCE_FACTORS.lightbulbHour
+  };
+  
+  return {
+    tokens,
+    model,
+    region,
+    energy: {
+      total: totalEnergy,
+      unit: 'kWh'
+    },
+    co2: {
+      total: totalCO2,
+      unit: 'kg CO2e'
+    },
+    equivalences: {
+      carMiles: Math.round(equivalences.carMiles * 100) / 100,
+      flightMiles: Math.round(equivalences.flightMiles * 100) / 100,
+      beefBurgers: Math.round(equivalences.beefBurgers * 100) / 100,
+      smartphoneCharges: Math.round(equivalences.smartphoneCharges),
+      householdElectricityDays: Math.round(equivalences.householdElectricityDays * 100) / 100,
+      treeYears: Math.round(equivalences.treeYears * 100) / 100,
+      laptopHours: Math.round(equivalences.laptopHours * 100) / 100,
+      lightbulbHours: Math.round(equivalences.lightbulbHours)
+    }
+  };
+}
+
+/**
+ * Get available models
+ */
+function getAvailableModels() {
+  return Object.keys(ENERGY_PER_TOKEN);
+}
+
+/**
+ * Get available regions
+ */
+function getAvailableRegions() {
+  return Object.keys(CO2_EMISSION_FACTORS);
+}
+
+/**
+ * Get model information
+ */
+function getModelInfo() {
+  return {
+    'gpt3': 'GPT-3 (OpenAI)',
+    'gpt4': 'GPT-4 (OpenAI)',
+    'claude': 'Claude (Anthropic)',
+    'gemini': 'Gemini (Google)',
+    'default': 'Average Model'
+  };
+}
+
+/**
+ * Get region information
+ */
+function getRegionInfo() {
+  return {
+    'global-average': 'Global Average',
+    'usa-average': 'USA Average',
+    'europe-average': 'Europe Average',
+    'china-average': 'China Average',
+    'canada-average': 'Canada Average',
+    'iowa-usa': 'Iowa, USA (High Carbon)',
+    'quebec-canada': 'Quebec, Canada (Low Carbon)',
+    'renewable': 'Renewable Energy'
+  };
+}
+
+module.exports = {
+  calculateEnvironmentalImpact,
+  getAvailableModels,
+  getAvailableRegions,
+  getModelInfo,
+  getRegionInfo,
+  ENERGY_PER_TOKEN,
+  CO2_EMISSION_FACTORS,
+  EQUIVALENCE_FACTORS
+};

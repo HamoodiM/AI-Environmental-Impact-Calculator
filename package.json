@@ -1,0 +1,20 @@
+{
+  "name": "ai-environmental-impact-calculator",
+  "version": "1.0.0",
+  "description": "Calculate the environmental impact of AI token usage",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && PORT=5001 npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "start": "PORT=5001 node server/index.js"
+  },
+  "keywords": ["ai", "environment", "carbon", "sustainability", "calculator"],
+  "author": "MoeTheToe",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
