@@ -86,4 +86,58 @@ export const calculateBatch = async (entries) => {
   }
 };
 
+// Authentication-related API functions
+export const getUserProfile = async (token) => {
+  try {
+    const response = await api.get('/auth/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserProfile = async (updates, token) => {
+  try {
+    const response = await api.put('/auth/profile', updates, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserPreferences = async (preferences, token) => {
+  try {
+    const response = await api.put('/auth/preferences', preferences, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserStats = async (token) => {
+  try {
+    const response = await api.get('/auth/stats', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { api };
 export default api;

@@ -50,6 +50,7 @@ A full-stack web application that calculates the environmental impact of AI toke
 ### Prerequisites
 - Node.js 16+ 
 - npm or yarn
+- PostgreSQL 12+
 
 ### Installation
 
@@ -64,7 +65,22 @@ A full-stack web application that calculates the environmental impact of AI toke
    npm run install-all
    ```
 
-3. **Start the development servers**
+3. **Set up PostgreSQL database**
+   ```bash
+   # Create database
+   createdb ai_impact_calculator
+   
+   # Copy environment file
+   cp server/env.example server/.env
+   # Edit server/.env with your database credentials
+   ```
+
+4. **Initialize the database**
+   ```bash
+   npm run init-db
+   ```
+
+5. **Start the development servers**
    ```bash
    npm run dev
    ```
@@ -179,25 +195,42 @@ cd client
 npm test
 ```
 
-## 📈 Future Enhancements
+## 🚀 Development Roadmap
 
-### Phase 2
-- [ ] User authentication
-- [ ] Historical usage tracking
-- [ ] OpenAI API integration
-- [ ] Advanced visualizations
+### ✅ Phase 1 (MVP) - COMPLETED
+- [x] Basic token impact calculation
+- [x] Real-world equivalences
+- [x] Multiple AI models support
+- [x] Regional CO₂ factors
+- [x] Modern React UI with TailwindCSS
+- [x] RESTful API with Express.js
+- [x] Responsive design
 
-### Phase 3
+### 🚧 Phase 2 (In Development)
+- [ ] **User Authentication**: Firebase Auth with Google/GitHub OAuth
+- [ ] **Data Persistence**: PostgreSQL database with user history
+- [ ] **OpenAI Integration**: Automatic token usage retrieval
+- [ ] **Advanced Visualizations**: Interactive charts with Chart.js
+- [ ] **User Dashboard**: Personal usage statistics and insights
+- [ ] **API Key Management**: Secure storage and validation
+- [ ] **Enhanced UI**: Dark mode, notifications, data export
+
+**📋 Detailed Phase 2 Plan**: See [PHASE2_PLAN.md](./PHASE2_PLAN.md)  
+**✅ Implementation Checklist**: See [PHASE2_CHECKLIST.md](./PHASE2_CHECKLIST.md)
+
+### 🔮 Phase 3 (Future)
 - [ ] Real-time carbon intensity APIs
 - [ ] Carbon offset suggestions
-- [ ] User dashboards
-- [ ] Export reports
-
-### Phase 4
-- [ ] AI Eco Advisor chatbot
 - [ ] Organization dashboards
-- [ ] Browser extension
-- [ ] Public REST API
+- [ ] Advanced analytics and reporting
+- [ ] Public REST API for developers
+
+### 🌟 Phase 4 (Advanced)
+- [ ] AI Eco Advisor chatbot
+- [ ] Browser extension for automatic tracking
+- [ ] VS Code plugin for developers
+- [ ] Mobile app (React Native)
+- [ ] Machine learning for usage predictions
 
 ## Contributing
 

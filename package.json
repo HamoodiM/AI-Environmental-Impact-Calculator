@@ -9,6 +9,7 @@
     "client": "cd client && npm start",
     "build": "cd client && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "init-db": "cd server && npm run init-db",
     "start": "PORT=5001 node server/index.js"
   },
   "keywords": ["ai", "environment", "carbon", "sustainability", "calculator"],

@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+require('dotenv').config();
+
 const { 
   calculateEnvironmentalImpact, 
   getAvailableModels, 
@@ -9,13 +11,39 @@ const {
   getRegionInfo 
 } = require('./calculations');
 
+const { initializeFirebase, apiRateLimit } = require('./middleware/auth');
+const { testConnection } = require('./models');
+const authRoutes = require('./routes/auth');
+const calculationRoutes = require('./routes/calculations');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Initialize Firebase Admin (if service account is provided)
+if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+  try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    initializeFirebase(serviceAccount);
+    console.log('✅ Firebase Admin initialized');
+  } catch (error) {
+    console.warn('⚠️ Firebase Admin not initialized:', error.message);
+  }
+}
+
+// Test database connection
+testConnection();
+
 // Middleware
 app.use(helmet());
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all API routes
+app.use('/api', apiRateLimit);
 
 // Routes
 
@@ -45,7 +73,11 @@ app.get('/api/regions', (req, res) => {
   }
 });
 
-// Calculate environmental impact
+// Mount route modules
+app.use('/api/auth', authRoutes);
+app.use('/api/calculations', calculationRoutes);
+
+// Legacy calculate endpoint (for backward compatibility)
 app.post('/api/calculate', (req, res) => {
   try {
     const { tokens, model, region } = req.body;
