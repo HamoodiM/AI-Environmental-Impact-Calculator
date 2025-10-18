@@ -10,10 +10,12 @@ const api = axios.create({
   },
 });
 
-// Request interceptor for logging
+// Request interceptor for logging (development only)
 api.interceptors.request.use(
   (config) => {
-    console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
+    }
     return config;
   },
   (error) => {
@@ -27,7 +29,9 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('API Error:', error.response?.data || error.message);
+    }
     
     if (error.response?.status === 400) {
       throw new Error(error.response.data.error || 'Invalid request');
@@ -54,7 +58,13 @@ export const calculateImpact = async (formData) => {
     
     // Trigger dashboard refresh by updating a timestamp in localStorage
     // This will be detected by the dashboard to refresh statistics
-    localStorage.setItem('lastCalculation', Date.now().toString());
+    const timestamp = Date.now().toString();
+    localStorage.setItem('lastCalculation', timestamp);
+    
+    // Dispatch custom event for same-tab updates
+    window.dispatchEvent(new CustomEvent('customStorageChange', {
+      detail: { key: 'lastCalculation', value: timestamp }
+    }));
     
     return response.data;
   } catch (error) {

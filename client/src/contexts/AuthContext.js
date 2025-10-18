@@ -18,8 +18,7 @@ import {
   sendPasswordResetEmail,
   GoogleAuthProvider,
   GithubAuthProvider,
-  signInWithPopup,
-  updateProfile as firebaseUpdateProfile
+  signInWithPopup
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import api from '../services/api';
@@ -299,7 +298,6 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${token}`
         }
       });
-      
       return response.data;
     } catch (error) {
       console.error('Failed to get user stats:', error);

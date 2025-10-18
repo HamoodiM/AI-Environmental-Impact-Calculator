@@ -8,6 +8,9 @@ A full-stack web application that calculates the environmental impact of AI toke
 - **Real-World Equivalences**: See impact in terms of car miles, flights, beef burgers, tree years, etc.
 - **Multiple AI Models**: Support for GPT-3, GPT-4, Claude, Gemini, and more
 - **Regional Accuracy**: Different CO₂ emission factors based on geographic location
+- **User Authentication**: Secure login with Firebase Auth (Google, GitHub, Email)
+- **Personal Dashboard**: Track your usage history and environmental impact over time
+- **Data Visualization**: Interactive charts showing your carbon footprint trends
 - **Modern UI**: Clean, responsive design with TailwindCSS
 - **Research-Based**: Calculations based on peer-reviewed research and industry data
 
@@ -15,14 +18,21 @@ A full-stack web application that calculates the environmental impact of AI toke
 
 ### Frontend
 - **React 18** - Modern React with hooks
+- **React Router** - Client-side routing
 - **TailwindCSS** - Utility-first CSS framework
 - **Chart.js** - Data visualization
 - **Lucide React** - Beautiful icons
+- **Firebase Auth** - User authentication
+- **React Hot Toast** - Notifications
 - **Axios** - HTTP client
 
 ### Backend
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
+- **Sequelize** - SQL ORM for database management
+- **SQLite/PostgreSQL** - Database for data persistence
+- **Firebase Admin** - Authentication and user management
+- **JWT** - Token-based authentication
 - **CORS** - Cross-origin resource sharing
 - **Helmet** - Security middleware
 
@@ -56,7 +66,7 @@ A full-stack web application that calculates the environmental impact of AI toke
 
 1. **Clone the repository**
    ```bash
-   git clone git@github.com:MoeTheToe/AI-Environmental-Impact-Calculator.git
+   git clone git@github.com:HamoodiM/AI-Environmental-Impact-Calculator.git
    cd AIEnvironmentalImpactCalculator
    ```
 
@@ -206,14 +216,14 @@ npm test
 - [x] RESTful API with Express.js
 - [x] Responsive design
 
-### 🚧 Phase 2 (In Development)
-- [ ] **User Authentication**: Firebase Auth with Google/GitHub OAuth
-- [ ] **Data Persistence**: PostgreSQL database with user history
+### ✅ Phase 2 (COMPLETED)
+- [x] **User Authentication**: Firebase Auth with Google/GitHub OAuth
+- [x] **Data Persistence**: SQLite/PostgreSQL database with user history
 - [ ] **OpenAI Integration**: Automatic token usage retrieval
-- [ ] **Advanced Visualizations**: Interactive charts with Chart.js
-- [ ] **User Dashboard**: Personal usage statistics and insights
-- [ ] **API Key Management**: Secure storage and validation
-- [ ] **Enhanced UI**: Dark mode, notifications, data export
+- [x] **Advanced Visualizations**: Interactive charts with Chart.js
+- [x] **User Dashboard**: Personal usage statistics and insights
+- [x] **API Key Management**: Secure storage and validation
+- [x] **Enhanced UI**: Notifications, data export, responsive design
 
 **📋 Detailed Phase 2 Plan**: See [PHASE2_PLAN.md](./PHASE2_PLAN.md)  
 **✅ Implementation Checklist**: See [PHASE2_CHECKLIST.md](./PHASE2_CHECKLIST.md)

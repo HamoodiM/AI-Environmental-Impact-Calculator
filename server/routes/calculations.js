@@ -107,7 +107,8 @@ router.post('/calculate', optionalAuth, async (req, res) => {
     // If user is authenticated, save the calculation
     if (req.user) {
       try {
-        await Calculation.create({
+        console.log('💾 Saving calculation for user:', req.user.id);
+        const calculation = await Calculation.create({
           user_id: req.user.id,
           tokens: parseInt(tokens),
           model: model || 'default',
@@ -117,10 +118,13 @@ router.post('/calculate', optionalAuth, async (req, res) => {
           equivalences: result.equivalences,
           source: 'manual'
         });
+        console.log('✅ Calculation saved with ID:', calculation.id);
       } catch (saveError) {
-        console.error('Failed to save calculation:', saveError);
+        console.error('❌ Failed to save calculation:', saveError);
         // Continue without saving if there's an error
       }
+    } else {
+      console.log('⚠️ No user authenticated, calculation not saved');
     }
 
     res.json(result);

@@ -11,7 +11,7 @@ const {
   getRegionInfo 
 } = require('./calculations');
 
-const { initializeFirebase, apiRateLimit } = require('./middleware/auth');
+const { initializeFirebase, apiRateLimit, optionalAuth } = require('./middleware/auth');
 const { testConnection } = require('./models');
 const authRoutes = require('./routes/auth');
 const calculationRoutes = require('./routes/calculations');
@@ -78,7 +78,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/calculations', calculationRoutes);
 
 // Legacy calculate endpoint (for backward compatibility)
-app.post('/api/calculate', (req, res) => {
+app.post('/api/calculate', optionalAuth, async (req, res) => {
   try {
     const { tokens, model, region } = req.body;
     
@@ -95,9 +95,35 @@ app.post('/api/calculate', (req, res) => {
     
     // Calculate impact
     const result = calculateEnvironmentalImpact(tokenCount, model, region);
+    
+    // If user is authenticated, save the calculation
+    if (req.user) {
+      try {
+        const { Calculation } = require('./models');
+        await Calculation.create({
+          user_id: req.user.id,
+          tokens: tokenCount,
+          model: model || 'default',
+          region: region || 'global-average',
+          energy_kwh: result.energy.total,
+          co2_kg: result.co2.total,
+          equivalences: result.equivalences,
+          source: 'manual'
+        });
+      } catch (saveError) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to save calculation:', saveError);
+        }
+        // Continue without saving if there's an error
+      }
+    }
+    
     res.json(result);
     
   } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Legacy endpoint error:', error);
+    }
     res.status(500).json({ error: error.message });
   }
 });

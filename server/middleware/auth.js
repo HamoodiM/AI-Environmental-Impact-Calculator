@@ -24,6 +24,12 @@ const verifyToken = async (req, res, next) => {
 
     const idToken = authHeader.split('Bearer ')[1];
     
+    // Development mode: allow dev-token for testing
+    if (process.env.NODE_ENV === 'development' && idToken === 'dev-token') {
+      req.user = { id: 1, email: 'dev@example.com' }; // Mock user for development
+      return next();
+    }
+    
     if (!firebaseAdmin) {
       return res.status(500).json({ error: 'Firebase not initialized' });
     }
@@ -71,6 +77,12 @@ const optionalAuth = async (req, res, next) => {
 
     const idToken = authHeader.split('Bearer ')[1];
     
+    // Development mode: allow dev-token for testing
+    if (process.env.NODE_ENV === 'development' && idToken === 'dev-token') {
+      req.user = { id: 1, email: 'dev@example.com' }; // Mock user for development
+      return next();
+    }
+    
     if (!firebaseAdmin) {
       req.user = null;
       return next();
@@ -106,20 +118,27 @@ const createRateLimit = (windowMs, max, message) => {
 // Different rate limits for different endpoints
 const authRateLimit = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  5, // 5 requests per window
+  1000, // 1000 requests per window (increased from 5)
   'Too many authentication attempts, please try again later'
 );
 
 const apiRateLimit = createRateLimit(
   15 * 60 * 1000, // 15 minutes
-  100, // 100 requests per window
+  5000, // 5000 requests per window (increased from 100)
   'Too many API requests, please try again later'
 );
 
 const calculationRateLimit = createRateLimit(
   60 * 1000, // 1 minute
-  20, // 20 calculations per minute
+  200, // 200 calculations per minute (increased from 20)
   'Too many calculations, please slow down'
+);
+
+// Very generous rate limits for profile and stats endpoints
+const profileStatsRateLimit = createRateLimit(
+  60 * 1000, // 1 minute
+  1000, // 1000 requests per minute for profile/stats
+  'Too many profile/stats requests, please slow down'
 );
 
 module.exports = {
@@ -128,5 +147,6 @@ module.exports = {
   optionalAuth,
   authRateLimit,
   apiRateLimit,
-  calculationRateLimit
+  calculationRateLimit,
+  profileStatsRateLimit
 };

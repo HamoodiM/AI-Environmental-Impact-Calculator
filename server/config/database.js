@@ -2,13 +2,9 @@ require('dotenv').config();
 
 module.exports = {
   development: {
-    dialect: 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5433,
-    database: process.env.DB_NAME || 'ai_impact_calculator',
-    username: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'password',
-    logging: console.log,
+    dialect: 'sqlite', // Using SQLite for development to avoid PostgreSQL setup
+    storage: './database.sqlite',
+    logging: process.env.NODE_ENV === 'development' ? console.log : false,
     define: {
       timestamps: true,
       underscored: true,

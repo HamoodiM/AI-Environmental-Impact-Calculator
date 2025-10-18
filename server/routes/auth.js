@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { verifyToken, authRateLimit } = require('../middleware/auth');
-const { User, UserPreference } = require('../models');
+const { verifyToken, authRateLimit, profileStatsRateLimit } = require('../middleware/auth');
+const { User, UserPreference, sequelize } = require('../models');
 
 // Apply rate limiting to all auth routes
 router.use(authRateLimit);
 
 // Get current user profile
-router.get('/profile', verifyToken, async (req, res) => {
+router.get('/profile', profileStatsRateLimit, verifyToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
       include: [
@@ -46,7 +46,7 @@ router.get('/profile', verifyToken, async (req, res) => {
 });
 
 // Update user profile
-router.put('/profile', verifyToken, async (req, res) => {
+router.put('/profile', profileStatsRateLimit, verifyToken, async (req, res) => {
   try {
     const { name } = req.body;
     
@@ -70,7 +70,7 @@ router.put('/profile', verifyToken, async (req, res) => {
 });
 
 // Update user preferences
-router.put('/preferences', verifyToken, async (req, res) => {
+router.put('/preferences', profileStatsRateLimit, verifyToken, async (req, res) => {
   try {
     const {
       default_model,
@@ -132,7 +132,7 @@ router.delete('/account', verifyToken, async (req, res) => {
 });
 
 // Get user statistics
-router.get('/stats', verifyToken, async (req, res) => {
+router.get('/stats', profileStatsRateLimit, verifyToken, async (req, res) => {
   try {
     const { Calculation } = require('../models');
     

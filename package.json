@@ -13,7 +13,7 @@
     "start": "PORT=5001 node server/index.js"
   },
   "keywords": ["ai", "environment", "carbon", "sustainability", "calculator"],
-  "author": "MoeTheToe",
+  "author": "HamoodiM",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

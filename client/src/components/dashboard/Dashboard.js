@@ -23,7 +23,7 @@ const Dashboard = () => {
         const userStats = await getUserStats();
         setStats(userStats);
       } catch (error) {
-        console.error('Failed to fetch stats:', error);
+        console.error('❌ Dashboard: Failed to fetch stats:', error);
         toast.error('Failed to load statistics');
       } finally {
         setLoading(false);
@@ -31,6 +31,54 @@ const Dashboard = () => {
     };
 
     fetchStats();
+  }, [getUserStats]);
+
+  // Listen for new calculations to refresh stats
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'lastCalculation') {
+        const fetchStats = async () => {
+          try {
+            const userStats = await getUserStats();
+            setStats(userStats);
+            toast.success('Stats updated!');
+          } catch (error) {
+            if (process.env.NODE_ENV === 'development') {
+              console.error('Failed to refresh stats:', error);
+            }
+          }
+        };
+        fetchStats();
+      }
+    };
+
+    // Listen for localStorage changes
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also listen for custom events (for same-tab updates)
+    const handleCustomStorageChange = (e) => {
+      if (e.detail.key === 'lastCalculation') {
+        const fetchStats = async () => {
+          try {
+            const userStats = await getUserStats();
+            setStats(userStats);
+            toast.success('Stats updated!');
+          } catch (error) {
+            if (process.env.NODE_ENV === 'development') {
+              console.error('Failed to refresh stats:', error);
+            }
+          }
+        };
+        fetchStats();
+      }
+    };
+
+    window.addEventListener('customStorageChange', handleCustomStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('customStorageChange', handleCustomStorageChange);
+    };
   }, [getUserStats]);
 
   const handleLogout = async () => {
@@ -41,6 +89,20 @@ const Dashboard = () => {
       toast.error('Failed to log out');
     }
   };
+
+  const handleTestStats = async () => {
+    try {
+      const userStats = await getUserStats();
+      setStats(userStats);
+      toast.success('Stats refreshed!');
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ Manual test failed:', error);
+      }
+      toast.error('Failed to refresh stats');
+    }
+  };
+
 
   if (loading) {
     return (
@@ -74,6 +136,14 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
+              <button
+                onClick={handleTestStats}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Test Stats</span>
+              </button>
+              
               <Link
                 to="/calculator"
                 className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"

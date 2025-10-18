@@ -32,7 +32,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Resources</h3>
             <div className="space-y-2">
               <a
-                href="https://github.com/MoeTheToe/AI-Environmental-Impact-Calculator"
+                href="https://github.com/HamoodiM/AI-Environmental-Impact-Calculator"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-gray-600 hover:text-green-600 transition-colors text-sm"
@@ -41,7 +41,7 @@ const Footer = () => {
                 View Source Code
               </a>
               <a
-                href="https://github.com/MoeTheToe/AI-Environmental-Impact-Calculator#calculation-methodology"
+                href="https://github.com/HamoodiM/AI-Environmental-Impact-Calculator#calculation-methodology"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-gray-600 hover:text-green-600 transition-colors text-sm"
@@ -50,7 +50,7 @@ const Footer = () => {
                 Research Sources
               </a>
               <a
-                href="https://github.com/MoeTheToe/AI-Environmental-Impact-Calculator#api-endpoints"
+                href="https://github.com/HamoodiM/AI-Environmental-Impact-Calculator#api-endpoints"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-gray-600 hover:text-green-600 transition-colors text-sm"
