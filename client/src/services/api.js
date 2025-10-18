@@ -13,7 +13,7 @@ const api = axios.create({
 // Request interceptor for logging
 api.interceptors.request.use(
   (config) => {
-    console.log(`Making ${config.method?.toUpperCase()} request to ${config.url}`);
+    console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error) => {
@@ -41,9 +41,21 @@ api.interceptors.response.use(
   }
 );
 
+// Public API functions (no authentication required)
 export const calculateImpact = async (formData) => {
   try {
-    const response = await api.post('/calculate', formData);
+    // In development mode, always include the dev token for authentication
+    const headers = {};
+    if (process.env.REACT_APP_NODE_ENV === 'development') {
+      headers.Authorization = 'Bearer dev-token';
+    }
+    
+    const response = await api.post('/calculate', formData, { headers });
+    
+    // Trigger dashboard refresh by updating a timestamp in localStorage
+    // This will be detected by the dashboard to refresh statistics
+    localStorage.setItem('lastCalculation', Date.now().toString());
+    
     return response.data;
   } catch (error) {
     throw error;
@@ -68,76 +80,24 @@ export const getRegions = async () => {
   }
 };
 
-export const getStats = async () => {
+export const getModelInfo = async (modelName) => {
   try {
-    const response = await api.get('/stats');
+    const response = await api.get(`/models/${modelName}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const calculateBatch = async (entries) => {
+export const getRegionInfo = async (regionName) => {
   try {
-    const response = await api.post('/calculate/batch', { entries });
+    const response = await api.get(`/regions/${regionName}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-// Authentication-related API functions
-export const getUserProfile = async (token) => {
-  try {
-    const response = await api.get('/auth/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const updateUserProfile = async (updates, token) => {
-  try {
-    const response = await api.put('/auth/profile', updates, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const updateUserPreferences = async (preferences, token) => {
-  try {
-    const response = await api.put('/auth/preferences', preferences, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const getUserStats = async (token) => {
-  try {
-    const response = await api.get('/auth/stats', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
+// Export the configured axios instance for use in AuthContext
 export { api };
 export default api;

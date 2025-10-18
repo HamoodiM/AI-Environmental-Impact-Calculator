@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -181,10 +181,6 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            
-            {/* Redirect authenticated users from auth pages */}
-            <Route path="/login" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/register" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
       </Router>

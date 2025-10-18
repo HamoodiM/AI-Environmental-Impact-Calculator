@@ -5,6 +5,9 @@ import { useAuth } from '../contexts/AuthContext';
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { currentUser, loading } = useAuth();
 
+  // In development mode, bypass authentication
+  const isDevelopment = process.env.REACT_APP_NODE_ENV === 'development';
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -14,6 +17,12 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
         </div>
       </div>
     );
+  }
+
+  // In development mode, allow access without authentication
+  if (isDevelopment && requireAuth) {
+    console.log('⚠️ Development mode - bypassing authentication requirement');
+    return children;
   }
 
   if (requireAuth && !currentUser) {
