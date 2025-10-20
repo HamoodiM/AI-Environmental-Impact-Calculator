@@ -68,8 +68,7 @@ jspm_packages/
 dist
 
 # Gatsby files
-.cache/
-public
+.cache
 
 # Storybook build outputs
 .out

@@ -25,11 +25,56 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:501019016735:web:0bc1a3ba62e77adbafdf2a"
 };
 
-// Initialize Firebase application
-const app = initializeApp(firebaseConfig);
+// Validate Firebase configuration
+const validateFirebaseConfig = (config) => {
+  const requiredFields = ['apiKey', 'authDomain', 'projectId', 'appId'];
+  const missingFields = requiredFields.filter(field => !config[field]);
+  
+  if (missingFields.length > 0) {
+    console.warn('Firebase configuration missing required fields:', missingFields);
+    return false;
+  }
+  return true;
+};
 
-// Initialize Firebase Authentication service
-export const auth = getAuth(app);
+// Initialize Firebase application with error handling
+let app;
+try {
+  if (validateFirebaseConfig(firebaseConfig)) {
+    app = initializeApp(firebaseConfig);
+    console.log('Firebase initialized successfully');
+  } else {
+    throw new Error('Invalid Firebase configuration');
+  }
+} catch (error) {
+  console.error('Firebase initialization failed:', error);
+  // Create a mock app object to prevent crashes
+  app = {
+    name: 'mock-app',
+    options: firebaseConfig
+  };
+}
+
+// Initialize Firebase Authentication service with error handling
+let auth;
+try {
+  auth = getAuth(app);
+  console.log('Firebase Auth initialized successfully');
+} catch (error) {
+  console.error('Firebase Auth initialization failed:', error);
+  // Create a mock auth object to prevent crashes
+  auth = {
+    currentUser: null,
+    onAuthStateChanged: () => () => {},
+    signInWithEmailAndPassword: () => Promise.reject(new Error('Firebase Auth not available')),
+    createUserWithEmailAndPassword: () => Promise.reject(new Error('Firebase Auth not available')),
+    signOut: () => Promise.reject(new Error('Firebase Auth not available')),
+    sendPasswordResetEmail: () => Promise.reject(new Error('Firebase Auth not available')),
+    signInWithPopup: () => Promise.reject(new Error('Firebase Auth not available'))
+  };
+}
+
+export { auth };
 
 /**
  * Firestore Database

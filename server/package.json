@@ -7,6 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "init-db": "node scripts/init-db.js",
+    "create-dev-user": "node scripts/create-dev-user.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
