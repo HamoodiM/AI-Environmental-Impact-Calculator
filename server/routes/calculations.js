@@ -64,8 +64,8 @@ router.post('/create', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Token count must be a positive number' });
     }
 
-    // Calculate environmental impact
-    const result = calculateEnvironmentalImpact(parseInt(tokens), model, region);
+    // Calculate environmental impact (with real-time data enabled)
+    const result = await calculateEnvironmentalImpact(parseInt(tokens), model, region, true);
 
     // Save to database
     const calculation = await Calculation.create({
@@ -101,8 +101,8 @@ router.post('/calculate', optionalAuth, async (req, res) => {
       return res.status(400).json({ error: 'Token count must be a positive number' });
     }
 
-    // Calculate environmental impact
-    const result = calculateEnvironmentalImpact(parseInt(tokens), model, region);
+    // Calculate environmental impact (with real-time data enabled)
+    const result = await calculateEnvironmentalImpact(parseInt(tokens), model, region, true);
 
     // If user is authenticated, save the calculation
     if (req.user) {

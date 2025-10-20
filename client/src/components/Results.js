@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Car, 
   Plane, 
@@ -10,10 +10,13 @@ import {
   Lightbulb,
   AlertCircle,
   TrendingUp,
-  Leaf
+  Leaf,
+  DollarSign
 } from 'lucide-react';
+import OffsetSuggestions from './offsets/OffsetSuggestions';
 
 const Results = ({ result, loading, error }) => {
+  const [showOffsetSuggestions, setShowOffsetSuggestions] = useState(false);
   if (loading) {
     return (
       <div className="bg-white rounded-2xl shadow-lg p-8">
@@ -127,6 +130,7 @@ const Results = ({ result, loading, error }) => {
   ];
 
   return (
+    <>
     <div className="bg-white rounded-2xl shadow-lg p-8 card-hover">
       <div className="flex items-center mb-6">
         <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4">
@@ -225,7 +229,40 @@ const Results = ({ result, loading, error }) => {
           }
         </p>
       </div>
+
+      {/* Offset Suggestions */}
+      {co2Total > 0.01 && (
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-semibold text-blue-800 mb-1 flex items-center">
+                <DollarSign className="w-4 h-4 mr-1" />
+                Offset Your Impact
+              </h4>
+              <p className="text-sm text-blue-700">
+                Neutralize your {co2Total.toFixed(4)} kg CO₂ emissions with verified offset projects
+              </p>
+            </div>
+            <button
+              onClick={() => setShowOffsetSuggestions(true)}
+              className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors flex items-center space-x-2"
+            >
+              <Leaf className="w-4 h-4" />
+              <span>View Options</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
+
+    {/* Offset Suggestions Modal */}
+    {showOffsetSuggestions && (
+      <OffsetSuggestions
+        co2Kg={co2Total}
+        onClose={() => setShowOffsetSuggestions(false)}
+      />
+    )}
+    </>
   );
 };
 

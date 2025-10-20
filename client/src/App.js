@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
+import AnalyticsDashboard from './components/analytics/AnalyticsDashboard';
 import { calculateImpact } from './services/api';
 
 // Main Calculator Component (for public use)
@@ -178,6 +179,14 @@ function App() {
               element={
                 <ProtectedRoute requireAuth={true}>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute requireAuth={true}>
+                  <AnalyticsDashboard />
                 </ProtectedRoute>
               } 
             />

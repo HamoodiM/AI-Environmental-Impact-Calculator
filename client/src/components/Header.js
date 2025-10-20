@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Leaf, Calculator, User, LogOut } from 'lucide-react';
+import { Leaf, Calculator, User, LogOut, BarChart3 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
@@ -46,6 +46,14 @@ const Header = () => {
                 >
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline">{userProfile?.name || 'Dashboard'}</span>
+                </Link>
+                
+                <Link
+                  to="/analytics"
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-green-600 transition-colors"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Analytics</span>
                 </Link>
                 
                 <button

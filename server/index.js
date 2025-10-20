@@ -15,6 +15,10 @@ const { initializeFirebase, apiRateLimit, optionalAuth } = require('./middleware
 const { testConnection } = require('./models');
 const authRoutes = require('./routes/auth');
 const calculationRoutes = require('./routes/calculations');
+const carbonRoutes = require('./routes/carbon');
+const analyticsRoutes = require('./routes/analytics');
+const organizationRoutes = require('./routes/organizations');
+const offsetRoutes = require('./routes/offsets');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -76,6 +80,10 @@ app.get('/api/regions', (req, res) => {
 // Mount route modules
 app.use('/api/auth', authRoutes);
 app.use('/api/calculations', calculationRoutes);
+app.use('/api/carbon', carbonRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/offsets', offsetRoutes);
 
 // Legacy calculate endpoint (for backward compatibility)
 app.post('/api/calculate', optionalAuth, async (req, res) => {
@@ -93,8 +101,8 @@ app.post('/api/calculate', optionalAuth, async (req, res) => {
       return res.status(400).json({ error: 'Token count must be a positive number' });
     }
     
-    // Calculate impact
-    const result = calculateEnvironmentalImpact(tokenCount, model, region);
+    // Calculate impact (with real-time data enabled by default)
+    const result = await calculateEnvironmentalImpact(tokenCount, model, region, true);
     
     // If user is authenticated, save the calculation
     if (req.user) {
@@ -129,7 +137,7 @@ app.post('/api/calculate', optionalAuth, async (req, res) => {
 });
 
 // Batch calculation for multiple entries
-app.post('/api/calculate/batch', (req, res) => {
+app.post('/api/calculate/batch', async (req, res) => {
   try {
     const { entries } = req.body;
     
@@ -137,10 +145,10 @@ app.post('/api/calculate/batch', (req, res) => {
       return res.status(400).json({ error: 'Entries must be an array' });
     }
     
-    const results = entries.map(entry => {
+    const results = await Promise.all(entries.map(async entry => {
       const { tokens, model, region } = entry;
-      return calculateEnvironmentalImpact(tokens, model, region);
-    });
+      return await calculateEnvironmentalImpact(tokens, model, region, true);
+    }));
     
     res.json({ results });
     
