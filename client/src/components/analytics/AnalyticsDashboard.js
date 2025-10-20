@@ -17,8 +17,11 @@ import {
   Globe,
   Brain,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  ArrowLeft,
+  Home
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -182,6 +185,23 @@ const AnalyticsDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
+              <div className="flex items-center space-x-4 mb-2">
+                <Link
+                  to="/"
+                  className="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors"
+                >
+                  <Home className="w-5 h-5" />
+                  <span>Home</span>
+                </Link>
+                <div className="h-6 w-px bg-gray-300"></div>
+                <Link
+                  to="/dashboard"
+                  className="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span>Dashboard</span>
+                </Link>
+              </div>
               <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
               <p className="mt-1 text-gray-600">Advanced insights into your environmental impact</p>
             </div>

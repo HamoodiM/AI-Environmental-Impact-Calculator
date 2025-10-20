@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Calculator as CalculatorIcon, Zap, Globe, Brain } from 'lucide-react';
-import { getModels, getRegions } from '../services/api';
+import { getModels, getRegions, getUserPreferences } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 
 const Calculator = ({ onCalculate, onReset, loading }) => {
+  const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
     tokens: '',
     model: 'default',
@@ -23,6 +25,23 @@ const Calculator = ({ onCalculate, onReset, loading }) => {
         
         setModels(modelsResponse.modelInfo);
         setRegions(regionsResponse.regionInfo);
+
+        // Fetch user preferences if logged in OR in development mode
+        if (currentUser || process.env.NODE_ENV === 'development') {
+          try {
+            const preferencesResponse = await getUserPreferences();
+            const preferences = preferencesResponse.data;
+            
+            // Apply user preferences as defaults
+            setFormData(prev => ({
+              ...prev,
+              model: preferences.default_model || prev.model,
+              region: preferences.default_region || prev.region
+            }));
+          } catch (error) {
+            console.log('Could not fetch user preferences, using defaults:', error);
+          }
+        }
       } catch (error) {
         console.error('Error fetching models and regions:', error);
       } finally {
@@ -31,7 +50,7 @@ const Calculator = ({ onCalculate, onReset, loading }) => {
     };
 
     fetchData();
-  }, []);
+  }, [currentUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

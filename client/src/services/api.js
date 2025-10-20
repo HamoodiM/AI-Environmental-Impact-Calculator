@@ -108,6 +108,15 @@ export const getRegionInfo = async (regionName) => {
   }
 };
 
+export const getUserPreferences = async () => {
+  try {
+    const response = await api.get('/user/preferences');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Export the configured axios instance for use in AuthContext
 export { api };
 export default api;

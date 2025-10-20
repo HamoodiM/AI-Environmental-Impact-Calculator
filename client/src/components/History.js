@@ -33,7 +33,8 @@ const History = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    if (currentUser) {
+    // In development mode, always fetch calculations (currentUser might be null)
+    if (currentUser || process.env.NODE_ENV === 'development') {
       fetchCalculations();
     }
   }, [currentUser, currentPage, filters]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -58,8 +59,8 @@ const History = () => {
       }
 
       const data = await response.json();
-      setCalculations(data.data.calculations);
-      setTotalPages(Math.ceil(data.data.total / itemsPerPage));
+      setCalculations(data.calculations);
+      setTotalPages(data.pagination.pages);
     } catch (error) {
       console.error('Error fetching calculations:', error);
       toast.error('Failed to load calculation history');

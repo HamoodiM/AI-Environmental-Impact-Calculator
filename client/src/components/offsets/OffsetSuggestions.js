@@ -81,7 +81,7 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
       setSuggestions(suggestionsData.data);
       setEquivalences(equivalencesData.data);
       setEducation(educationData.data);
-      setProviders(providersData.data);
+      setProviders(providersData.data.resources || []);
     } catch (error) {
       console.error('Error fetching offset data:', error);
       toast.error('Failed to load offset suggestions');
@@ -420,7 +420,7 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
           )}
 
           {/* Providers Tab */}
-          {activeTab === 'providers' && providers && (
+          {activeTab === 'providers' && (
             <div className="space-y-6">
               <div className="text-center mb-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -431,8 +431,9 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {providers.map((provider, index) => (
+              {providers && providers.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {providers.map((provider, index) => (
                   <div key={index} className="bg-gray-50 rounded-lg p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -464,6 +465,13 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
                   </div>
                 ))}
               </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Globe className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">No Providers Available</h4>
+                  <p className="text-gray-600">Unable to load offset providers at this time.</p>
+                </div>
+              )}
 
               <div className="bg-blue-50 rounded-lg p-6">
                 <h4 className="font-semibold text-blue-900 mb-3">About Free Resources</h4>

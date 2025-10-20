@@ -62,7 +62,7 @@ const OFFSET_PROJECTS = {
     duration: '3-10 years',
     coBenefits: ['Health benefits', 'Time savings', 'Fuel efficiency'],
     providers: ['Gold Standard', 'VCS', 'Clean Development Mechanism'],
-    learnMoreUrl: 'https://www.goldstandard.org/our-work/clean-cooking',
+    learnMoreUrl: 'https://www.goldstandard.org/',
     providerUrls: {
       'Gold Standard': 'https://www.goldstandard.org/',
       'VCS': 'https://verra.org/',
