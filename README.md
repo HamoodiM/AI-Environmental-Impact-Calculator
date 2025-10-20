@@ -70,56 +70,50 @@ A full-stack web application that calculates the environmental impact of AI toke
    cd AIEnvironmentalImpactCalculator
    ```
 
-2. **Install all dependencies**
+2. **Start the application** (Everything is automated!)
    ```bash
-   npm run install-all
+   ./start.sh
    ```
 
-3. **Set up PostgreSQL database**
-   ```bash
-   # Create database
-   createdb ai_impact_calculator
-   
-   # Copy environment file
-   cp server/env.example server/.env
-   # Edit server/.env with your database credentials
-   ```
+   This will automatically:
+   - Create environment files from templates
+   - Install all dependencies
+   - Initialize the database
+   - Create required directories and files
+   - Start both frontend and backend servers
 
-4. **Initialize the database**
-   ```bash
-   npm run init-db
-   ```
+   The application will be available at:
+   - Frontend: `http://localhost:3000`
+   - Backend API: `http://localhost:5001`
 
-5. **Start the development servers**
+3. **Stop the application**
    ```bash
-   npm run dev
+   ./stop.sh
    ```
-
-   This will start:
-   - Backend API on `http://localhost:5001`
-   - Frontend on `http://localhost:3000`
 
 ### Manual Setup
 
 If you prefer to set up each part separately:
 
-1. **Install root dependencies**
+1. **Install dependencies**
    ```bash
-   npm install
+   npm run install-all
    ```
 
-2. **Setup backend**
+2. **Create environment files**
    ```bash
-   cd server
-   npm install
+   cp client/.env.example client/.env
+   cp server/env.example server/.env
+   ```
+
+3. **Initialize the database**
+   ```bash
+   npm run init-db
+   ```
+
+4. **Start the development servers**
+   ```bash
    npm run dev
-   ```
-
-3. **Setup frontend** (in a new terminal)
-   ```bash
-   cd client
-   npm install
-   npm start
    ```
 
 ## 📁 Project Structure

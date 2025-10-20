@@ -20,6 +20,17 @@ fi
 echo "✅ Node.js and npm are installed"
 echo ""
 
+# Create environment files if they don't exist
+if [ ! -f "client/.env" ]; then
+    echo "📄 Creating client/.env from template..."
+    cp client/.env.example client/.env
+fi
+
+if [ ! -f "server/.env" ]; then
+    echo "📄 Creating server/.env from template..."
+    cp server/env.example server/.env
+fi
+
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing root dependencies..."
@@ -34,6 +45,12 @@ fi
 if [ ! -d "client/node_modules" ]; then
     echo "📦 Installing client dependencies..."
     cd client && npm install && cd ..
+fi
+
+# Initialize database if it doesn't exist
+if [ ! -f "server/database.sqlite" ]; then
+    echo "🗄️ Initializing database..."
+    cd server && npm run init-db && cd ..
 fi
 
 # Ensure client/public directory exists with required files
