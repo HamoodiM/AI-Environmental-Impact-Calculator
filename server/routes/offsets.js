@@ -255,4 +255,19 @@ router.get('/health', optionalAuth, async (req, res) => {
   }
 });
 
+/**
+ * @route GET /api/offsets/providers
+ * @desc Get list of free offset providers and calculators
+ * @access Private (User)
+ */
+router.get('/providers', verifyToken, async (req, res) => {
+  try {
+    const providers = await offsetSuggestionsService.getFreeOffsetResources();
+    res.json({ success: true, data: providers });
+  } catch (error) {
+    console.error('Error fetching offset providers:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch offset providers', details: error.message });
+  }
+});
+
 module.exports = router;

@@ -14,7 +14,8 @@ import {
   CheckCircle, 
   Info,
   Calculator,
-  BookOpen
+  BookOpen,
+  Globe
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -24,6 +25,7 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
   const [education, setEducation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('suggestions');
+  const [providers, setProviders] = useState(null);
 
   useEffect(() => {
     if (co2Kg && co2Kg > 0) {
@@ -35,8 +37,8 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
     try {
       setLoading(true);
       
-      // Fetch suggestions and equivalences in parallel
-      const [suggestionsRes, equivalencesRes, educationRes] = await Promise.all([
+      // Fetch suggestions, equivalences, education, and providers in parallel
+      const [suggestionsRes, equivalencesRes, educationRes, providersRes] = await Promise.all([
         fetch('/api/offsets/suggestions', {
           method: 'POST',
           headers: {
@@ -57,22 +59,29 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token') || 'dev-token'}`
           }
+        }),
+        fetch('/api/offsets/providers', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token') || 'dev-token'}`
+          }
         })
       ]);
 
-      if (!suggestionsRes.ok || !equivalencesRes.ok || !educationRes.ok) {
+      if (!suggestionsRes.ok || !equivalencesRes.ok || !educationRes.ok || !providersRes.ok) {
         throw new Error('Failed to fetch offset data');
       }
 
-      const [suggestionsData, equivalencesData, educationData] = await Promise.all([
+      const [suggestionsData, equivalencesData, educationData, providersData] = await Promise.all([
         suggestionsRes.json(),
         equivalencesRes.json(),
-        educationRes.json()
+        educationRes.json(),
+        providersRes.json()
       ]);
 
       setSuggestions(suggestionsData.data);
       setEquivalences(equivalencesData.data);
       setEducation(educationData.data);
+      setProviders(providersData.data);
     } catch (error) {
       console.error('Error fetching offset data:', error);
       toast.error('Failed to load offset suggestions');
@@ -155,7 +164,8 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
             {[
               { id: 'suggestions', name: 'Suggestions', icon: TrendingUp },
               { id: 'equivalences', name: 'Impact', icon: Calculator },
-              { id: 'education', name: 'Learn More', icon: BookOpen }
+              { id: 'education', name: 'Learn More', icon: BookOpen },
+              { id: 'providers', name: 'Providers', icon: Globe }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -252,9 +262,14 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
                       <div className="text-sm text-gray-500">
                         Verified by: {suggestion.providers.slice(0, 2).join(', ')}
                       </div>
-                      <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                      <a
+                        href={suggestion.learnMoreUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                      >
                         Learn More
-                      </button>
+                      </a>
                     </div>
                   </div>
                 ))}
@@ -403,6 +418,68 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
               ))}
             </div>
           )}
+
+          {/* Providers Tab */}
+          {activeTab === 'providers' && providers && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Free Offset Providers & Resources
+                </h3>
+                <p className="text-gray-600">
+                  Explore free carbon offset calculators and verified project providers
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {providers.map((provider, index) => (
+                  <div key={index} className="bg-gray-50 rounded-lg p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                          {provider.name}
+                        </h4>
+                        <p className="text-sm text-gray-600 mb-3">
+                          {provider.description}
+                        </p>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          provider.type === 'calculator' 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-green-100 text-green-800'
+                        }`}>
+                          {provider.type === 'calculator' ? 'Calculator' : 'Provider'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <a
+                      href={provider.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                    >
+                      Visit Website
+                      <Globe className="w-4 h-4 ml-2" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-blue-50 rounded-lg p-6">
+                <h4 className="font-semibold text-blue-900 mb-3">About Free Resources</h4>
+                <p className="text-blue-700 text-sm mb-3">
+                  These resources are provided free of charge to help you understand and calculate your carbon footprint. 
+                  While some may offer paid offset services, the calculators and educational content are available at no cost.
+                </p>
+                <ul className="text-blue-700 text-sm space-y-1">
+                  <li>• Use calculators to understand your impact</li>
+                  <li>• Research verified offset projects</li>
+                  <li>• Learn about carbon offset standards</li>
+                  <li>• Compare different offset options</li>
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -418,7 +495,10 @@ const OffsetSuggestions = ({ co2Kg, onClose }) => {
               >
                 Close
               </button>
-              <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+              <button 
+                onClick={() => setActiveTab('providers')}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              >
                 View Providers
               </button>
             </div>

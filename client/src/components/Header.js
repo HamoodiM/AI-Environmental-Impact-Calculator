@@ -1,14 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Leaf, Calculator, User, LogOut, BarChart3 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Leaf, Calculator, User, LogOut, BarChart3, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
   const { currentUser, userProfile, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logout();
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -54,6 +56,14 @@ const Header = () => {
                 >
                   <BarChart3 className="w-4 h-4" />
                   <span className="hidden sm:inline">Analytics</span>
+                </Link>
+
+                <Link
+                  to="/settings"
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-green-600 transition-colors"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span className="hidden sm:inline">Settings</span>
                 </Link>
                 
                 <button

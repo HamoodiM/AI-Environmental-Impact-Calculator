@@ -19,6 +19,7 @@ const carbonRoutes = require('./routes/carbon');
 const analyticsRoutes = require('./routes/analytics');
 const organizationRoutes = require('./routes/organizations');
 const offsetRoutes = require('./routes/offsets');
+const userRoutes = require('./routes/user');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -84,6 +85,7 @@ app.use('/api/carbon', carbonRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/organizations', organizationRoutes);
 app.use('/api/offsets', offsetRoutes);
+app.use('/api/user', userRoutes);
 
 // Legacy calculate endpoint (for backward compatibility)
 app.post('/api/calculate', optionalAuth, async (req, res) => {

@@ -178,6 +178,17 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       setUserProfile(null);
+      setCurrentUser(null);
+      
+      // Clear localStorage items
+      localStorage.removeItem('token');
+      localStorage.removeItem('lastCalculation');
+      localStorage.removeItem('userProfile');
+      
+      // Clear any other app-specific storage
+      localStorage.removeItem('calculationHistory');
+      localStorage.removeItem('userPreferences');
+      
       return await signOut(auth);
     } catch (error) {
       setError(error.message);

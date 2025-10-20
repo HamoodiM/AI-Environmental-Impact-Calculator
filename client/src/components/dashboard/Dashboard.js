@@ -9,11 +9,12 @@ import {
   LogOut,
   BarChart3
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { userProfile, getUserStats, logout } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -85,6 +86,7 @@ const Dashboard = () => {
     try {
       await logout();
       toast.success('Logged out successfully');
+      navigate('/');
     } catch (error) {
       toast.error('Failed to log out');
     }

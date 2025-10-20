@@ -17,7 +17,13 @@ const OFFSET_PROJECTS = {
     effectiveness: 0.85, // 85% effectiveness
     duration: '20-50 years',
     coBenefits: ['Biodiversity', 'Soil conservation', 'Water quality'],
-    providers: ['One Tree Planted', 'Trees for the Future', 'Eden Reforestation']
+    providers: ['One Tree Planted', 'Trees for the Future', 'Eden Reforestation'],
+    learnMoreUrl: 'https://onetreeplanted.org/',
+    providerUrls: {
+      'One Tree Planted': 'https://onetreeplanted.org/',
+      'Trees for the Future': 'https://trees.org/',
+      'Eden Reforestation': 'https://edenprojects.org/'
+    }
   },
   'renewable-energy': {
     name: 'Renewable Energy Projects',
@@ -26,7 +32,13 @@ const OFFSET_PROJECTS = {
     effectiveness: 0.95, // 95% effectiveness
     duration: '10-25 years',
     coBenefits: ['Clean energy', 'Job creation', 'Energy independence'],
-    providers: ['Gold Standard', 'VCS', 'Climate Action Reserve']
+    providers: ['Gold Standard', 'VCS', 'Climate Action Reserve'],
+    learnMoreUrl: 'https://www.goldstandard.org/',
+    providerUrls: {
+      'Gold Standard': 'https://www.goldstandard.org/',
+      'VCS': 'https://verra.org/',
+      'Climate Action Reserve': 'https://www.climateactionreserve.org/'
+    }
   },
   'methane-capture': {
     name: 'Methane Capture Projects',
@@ -35,7 +47,12 @@ const OFFSET_PROJECTS = {
     effectiveness: 0.90, // 90% effectiveness
     duration: '5-15 years',
     coBenefits: ['Air quality', 'Waste reduction', 'Energy generation'],
-    providers: ['American Carbon Registry', 'Climate Action Reserve']
+    providers: ['American Carbon Registry', 'Climate Action Reserve'],
+    learnMoreUrl: 'https://americancarbonregistry.org/',
+    providerUrls: {
+      'American Carbon Registry': 'https://americancarbonregistry.org/',
+      'Climate Action Reserve': 'https://www.climateactionreserve.org/'
+    }
   },
   'cookstove': {
     name: 'Clean Cookstove Projects',
@@ -44,7 +61,13 @@ const OFFSET_PROJECTS = {
     effectiveness: 0.80, // 80% effectiveness
     duration: '3-10 years',
     coBenefits: ['Health benefits', 'Time savings', 'Fuel efficiency'],
-    providers: ['Gold Standard', 'VCS', 'Clean Development Mechanism']
+    providers: ['Gold Standard', 'VCS', 'Clean Development Mechanism'],
+    learnMoreUrl: 'https://www.goldstandard.org/our-work/clean-cooking',
+    providerUrls: {
+      'Gold Standard': 'https://www.goldstandard.org/',
+      'VCS': 'https://verra.org/',
+      'Clean Development Mechanism': 'https://cdm.unfccc.int/'
+    }
   },
   'forest-conservation': {
     name: 'Forest Conservation',
@@ -53,7 +76,13 @@ const OFFSET_PROJECTS = {
     effectiveness: 0.88, // 88% effectiveness
     duration: '15-30 years',
     coBenefits: ['Biodiversity', 'Indigenous rights', 'Ecosystem services'],
-    providers: ['REDD+', 'VCS', 'Gold Standard']
+    providers: ['REDD+', 'VCS', 'Gold Standard'],
+    learnMoreUrl: 'https://www.un-redd.org/',
+    providerUrls: {
+      'REDD+': 'https://www.un-redd.org/',
+      'VCS': 'https://verra.org/',
+      'Gold Standard': 'https://www.goldstandard.org/'
+    }
   }
 };
 
@@ -173,6 +202,8 @@ function suggestProjects(co2Kg, preferences = {}) {
         duration: project.duration,
         coBenefits: project.coBenefits,
         providers: project.providers,
+        learnMoreUrl: project.learnMoreUrl,
+        providerUrls: project.providerUrls,
         impact: {
           co2Offset: calculation.impact.co2Offset,
           treesEquivalent,
