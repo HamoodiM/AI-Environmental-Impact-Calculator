@@ -51,6 +51,9 @@ fi
 if [ ! -f "server/database.sqlite" ]; then
     echo "🗄️ Initializing database..."
     cd server && npm run init-db && cd ..
+    
+    echo "👤 Creating development user..."
+    cd server && node scripts/create-dev-user.js && cd ..
 fi
 
 # Ensure client/public directory exists with required files
