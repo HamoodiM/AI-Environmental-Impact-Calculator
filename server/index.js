@@ -11,7 +11,7 @@ const {
   getRegionInfo 
 } = require('./calculations');
 
-const { initializeFirebase, apiRateLimit, optionalAuth } = require('./middleware/auth');
+const { apiRateLimit, optionalAuth } = require('./middleware/auth');
 const { testConnection } = require('./models');
 const authRoutes = require('./routes/auth');
 const calculationRoutes = require('./routes/calculations');
@@ -24,16 +24,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Initialize Firebase Admin (if service account is provided)
-if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-  try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    initializeFirebase(serviceAccount);
-    console.log('✅ Firebase Admin initialized');
-  } catch (error) {
-    console.warn('⚠️ Firebase Admin not initialized:', error.message);
-  }
-}
+// JWT authentication is now the default - no external dependencies required
 
 // Test database connection
 testConnection();

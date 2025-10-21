@@ -7,11 +7,6 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     primaryKey: true
   },
-  firebase_uid: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -19,6 +14,10 @@ const User = sequelize.define('User', {
     validate: {
       isEmail: true
     }
+  },
+  password_hash: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
   name: {
     type: DataTypes.STRING,
@@ -39,10 +38,6 @@ const User = sequelize.define('User', {
 }, {
   tableName: 'users',
   indexes: [
-    {
-      unique: true,
-      fields: ['firebase_uid']
-    },
     {
       unique: true,
       fields: ['email']

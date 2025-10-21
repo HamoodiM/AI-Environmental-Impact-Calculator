@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const { User, UserPreference } = require('../models');
 
 async function createDevUser() {
@@ -8,10 +9,13 @@ async function createDevUser() {
     let user = await User.findOne({ where: { email: 'dev@example.com' } });
     
     if (!user) {
+      // Hash password for dev user
+      const password_hash = await bcrypt.hash('devpassword', 12);
+      
       // Create dev user
       user = await User.create({
-        firebase_uid: 'dev-user-123',
         email: 'dev@example.com',
+        password_hash: password_hash,
         name: 'Development User',
         avatar_url: null,
         is_active: true,

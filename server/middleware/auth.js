@@ -1,19 +1,7 @@
-const admin = require('firebase-admin');
+const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
-// Initialize Firebase Admin (will be configured in main server file)
-let firebaseAdmin = null;
-
-const initializeFirebase = (serviceAccount) => {
-  if (!firebaseAdmin) {
-    firebaseAdmin = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
-  }
-  return firebaseAdmin;
-};
-
-// Middleware to verify Firebase ID token
+// Middleware to verify JWT token
 const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -22,41 +10,29 @@ const verifyToken = async (req, res, next) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    const idToken = authHeader.split('Bearer ')[1];
+    const token = authHeader.split('Bearer ')[1];
     
     // Development mode: allow dev-token for testing
-    if (process.env.NODE_ENV === 'development' && idToken === 'dev-token') {
+    if (process.env.NODE_ENV === 'development' && token === 'dev-token') {
       req.user = { id: 1, email: 'dev@example.com' }; // Mock user for development
       return next();
     }
     
-    if (!firebaseAdmin) {
-      return res.status(500).json({ error: 'Firebase not initialized' });
+    // Verify JWT token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Get user from database
+    const user = await User.findByPk(decoded.userId);
+    
+    if (!user || !user.is_active) {
+      return res.status(401).json({ error: 'User not found or inactive' });
     }
 
-    // Verify the ID token
-    const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
-    
-    // Get or create user in our database
-    let user = await User.findOne({ where: { firebase_uid: decodedToken.uid } });
-    
-    if (!user) {
-      // Create new user
-      user = await User.create({
-        firebase_uid: decodedToken.uid,
-        email: decodedToken.email,
-        name: decodedToken.name || null,
-        avatar_url: decodedToken.picture || null,
-        last_login: new Date()
-      });
-    } else {
-      // Update last login
-      await user.update({ last_login: new Date() });
-    }
+    // Update last login
+    await user.update({ last_login: new Date() });
 
     // Add user to request object
     req.user = user;
-    req.firebaseUser = decodedToken;
     
     next();
   } catch (error) {
@@ -75,24 +51,18 @@ const optionalAuth = async (req, res, next) => {
       return next();
     }
 
-    const idToken = authHeader.split('Bearer ')[1];
+    const token = authHeader.split('Bearer ')[1];
     
     // Development mode: allow dev-token for testing
-    if (process.env.NODE_ENV === 'development' && idToken === 'dev-token') {
+    if (process.env.NODE_ENV === 'development' && token === 'dev-token') {
       req.user = { id: 1, email: 'dev@example.com' }; // Mock user for development
       return next();
     }
     
-    if (!firebaseAdmin) {
-      req.user = null;
-      return next();
-    }
-
-    const decodedToken = await firebaseAdmin.auth().verifyIdToken(idToken);
-    const user = await User.findOne({ where: { firebase_uid: decodedToken.uid } });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.userId);
     
-    req.user = user;
-    req.firebaseUser = decodedToken;
+    req.user = user && user.is_active ? user : null;
     
     next();
   } catch (error) {
@@ -142,7 +112,6 @@ const profileStatsRateLimit = createRateLimit(
 );
 
 module.exports = {
-  initializeFirebase,
   verifyToken,
   optionalAuth,
   authRateLimit,
